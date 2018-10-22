@@ -9,7 +9,7 @@ using ComLib.Extensions;
 
 namespace ZipReadWrite
 {
-    class SlideManifest
+    public class SlideManifest
     {
         Story story;
         Relations rels;

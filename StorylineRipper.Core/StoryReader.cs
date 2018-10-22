@@ -12,7 +12,7 @@ using Ionic.Zip;
 
 namespace ZipReadWrite
 {
-    class StoryReader : IDisposable
+    public class StoryReader : IDisposable
     {
         public string PathToFile { get; private set; }
 
