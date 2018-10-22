@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZipReadWrite", "ZipReadWrite\ZipReadWrite.csproj", "{89EB7F1F-8422-4CF6-982E-E5F6913516B4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorylineRipper", "ZipReadWrite\StorylineRipper.csproj", "{89EB7F1F-8422-4CF6-982E-E5F6913516B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
