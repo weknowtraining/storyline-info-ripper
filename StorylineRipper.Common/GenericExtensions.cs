@@ -2,7 +2,7 @@
 using System.IO;
 using System.Xml.Serialization;
 
-namespace ComLib.Extensions
+namespace StorylineRipper.Common.Extensions
 {
     public static class GenericExtensions
     {

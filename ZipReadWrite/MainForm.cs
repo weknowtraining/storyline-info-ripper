@@ -9,11 +9,9 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using System.Text.RegularExpressions;
-using System.Xml.Linq;
-using System.Xml;
+using StorylineRipper.Core;
 
-namespace ZipReadWrite
+namespace StorylineRipper
 {
     public partial class MainForm : Form
     {
@@ -30,11 +28,10 @@ namespace ZipReadWrite
 
         private void button1_Click(object sender, EventArgs e)
         {
-            using (StoryReader reader = new StoryReader(progressBar1))
-            {
-                reader.SetFilePath();
-                reader.ReadFile();
-            }
+            StoryReader reader = new StoryReader(progressBar1);
+            reader.SetFilePath();
+            reader.LoadFile();
+            reader.ReadFile();
         }
 
         private void progressBar1_Click(object sender, EventArgs e)
@@ -44,12 +41,9 @@ namespace ZipReadWrite
 
         private void TestBtn_Click(object sender, EventArgs e)
         {
-            using (StoryReader reader = new StoryReader(progressBar1))
-            {
-                reader.SetFilePath();
-
-                SlideManifest manifest = new SlideManifest(reader.GetXmlTextAtPath("story/story.xml"), reader.GetXmlTextAtPath("story/_rels/story.xml.rels"));
-            }
+            StoryReader reader = new StoryReader(progressBar1);
+            if (reader.SetFilePath() && reader.LoadFile())
+                reader.ReadFile();
         }
     }
 }

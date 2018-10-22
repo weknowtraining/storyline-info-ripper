@@ -1,31 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 using System.Xml.Serialization;
-using ComLib.Extensions;
 
-namespace ZipReadWrite
+using StorylineRipper.Common.Extensions;
+
+namespace StorylineRipper.Core
 {
     public class SlideManifest
     {
-        Story story;
-        Relations rels;
+        public Story story;
+        private Relations rels;
 
-        public SlideManifest(string storyXml, string relsXml)
+        public SlideManifest(StoryReader reader, string storyXml, string relsXml)
         {
             story = storyXml.Deserialize<Story>();
             rels = relsXml.Deserialize<Relations>();
 
-            for (int m = 0; m < story.Scenes.Length; m++)
-                for (int s = 0; s < story.Scenes[m].Slides.Length; s++)
+            for (int x = 0; x < story.Scenes.Length; x++)
+                for (int y = 0; y < story.Scenes[x].Slides.Length; y++)
                 {
-                    Slide slide = story.Scenes[m].Slides[s];
+                    Slide slide = story.Scenes[x].Slides[y];
 
-                    slide.Index = string.Format("{0}.{1}", m + 1, s + 1);
-                    slide.Path = rels.Relationships.Single(x => x.Id == slide.Id).Path;
+                    slide.Index = string.Format("{0}.{1}", x + 1, y + 1);
+                    slide.Path = rels.Relationships.Single(r => r.Id == slide.Id).Path;
+
+                    SlideContent content = reader.GetXmlTextAtPath(slide.Path.TrimStart('/')).Deserialize<SlideContent>();
+                    slide.Notes = content.Notes;
+                    slide.Name = content.Name;
                 }
         }
     }
