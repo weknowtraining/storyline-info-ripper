@@ -17,8 +17,11 @@ namespace StorylineRipper.Core
     public class StoryReader
     {
         public string PathToFile { get; private set; }
+        public string OutputPath { get; private set; }
 
         public SlideManifest manifest;
+
+        public event Action OnGenerationComplete;
 
         private ProgressBar progressBar;
         private ZipFile loadedFile;
@@ -101,12 +104,12 @@ namespace StorylineRipper.Core
             progressBar.Step = 1;
             progressBar.PerformStep();
 
-            string newPath = Path.GetDirectoryName(PathToFile) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(PathToFile) + "-NarrationReport.txt";
-            File.Create(newPath).Close();
+            OutputPath = Path.GetDirectoryName(PathToFile) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(PathToFile) + "-NarrationReport.txt";
+            File.Create(OutputPath).Dispose();
 
             progressBar.PerformStep();
 
-            using (var writer = new StreamWriter(newPath))
+            using (var writer = new StreamWriter(OutputPath))
             {
                 writer.Write(contents);
             }
@@ -115,6 +118,9 @@ namespace StorylineRipper.Core
 
             //Finish up
             progressBar.Value = progressBar.Maximum;
+
+            if (OnGenerationComplete != null)
+                OnGenerationComplete.Invoke();
         }
 
     }

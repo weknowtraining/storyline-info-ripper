@@ -15,6 +15,8 @@ namespace StorylineRipper
 {
     public partial class MainForm : Form
     {
+        private bool isPathValid = false;
+        private StoryReader reader;
 
         public MainForm()
         {
@@ -26,18 +28,36 @@ namespace StorylineRipper
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void OpenFileButton_Click(object sender, EventArgs e)
         {
-            StoryReader reader = new StoryReader(progressBar1);
-            if (reader.SetFilePath() && reader.LoadFile())
+            reader = new StoryReader(progressBar1);
+            reader.OnGenerationComplete += GenerationComplete;
+
+            isPathValid = reader.SetFilePath();
+
+            FilePathLabel.Text = Path.GetFileName(reader.PathToFile);
+            GenNarrationButton.Enabled = isPathValid;
+        }
+
+        private void GenNarrationButton_Click(object sender, EventArgs e)
+        {
+            if (reader.LoadFile())
                 reader.ReadFile();
 
             reader.WriteNarrationReport();
         }
 
-        private void progressBar1_Click(object sender, EventArgs e)
+        private void GenerationComplete()
         {
+            FilePathLabel.Text = "Done!";
 
+            // Open a folder view of the output
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
+            {
+                FileName = Path.GetDirectoryName(reader.OutputPath),
+                UseShellExecute = true,
+                Verb = "open"
+            });
         }
     }
 }
