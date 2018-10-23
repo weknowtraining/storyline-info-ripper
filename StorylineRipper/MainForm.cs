@@ -19,11 +19,14 @@ namespace StorylineRipper
         private bool isPathValid = false;
         private StoryReader reader;
 
-        Thread generatorThread;
+        private Thread generatorThread;
+
+        private static MainForm Instance;
 
         public MainForm()
         {
             InitializeComponent();
+            Instance = this;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -34,7 +37,6 @@ namespace StorylineRipper
         private void OpenFileButton_Click(object sender, EventArgs e)
         {
             reader = new StoryReader(OnProgressUpdate);
-            reader.OnGenerationComplete += GenerationComplete;
 
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Filter = "Storyline Story|*.story|All Files|*.*";
@@ -44,13 +46,17 @@ namespace StorylineRipper
             reader.PathToFile = dialog.FileName;
             FilePathLabel.Text = Path.GetFileName(reader.PathToFile);
             GenNarrationButton.Enabled = isPathValid;
+
+            AddToLog("File Selected");
         }
 
         private void GenNarrationButton_Click(object sender, EventArgs e)
         {
             FilePathLabel.Text = "Working...";
+            AddToLog("Beginning workload...");
             if (reader.LoadFile())
             {
+                reader.OnGenerationComplete += GenerationComplete;
                 generatorThread = new Thread(
                     new ThreadStart(HandleNarrationGeneration));
                 generatorThread.IsBackground = true;
@@ -64,7 +70,7 @@ namespace StorylineRipper
 
         private void HandleNarrationGeneration()
         {
-            reader.OnGenerationComplete += GenerationComplete;
+            AddToLog("Reading story file...");
             reader.ReadFile();
             reader.WriteNarrationReport();
         }
@@ -79,15 +85,34 @@ namespace StorylineRipper
                 Verb = "open"
             });
 
-            FilePathLabel.Text = "Done!";
+            FilePathLabel.Invoke((MethodInvoker)(() =>
+            {
+                FilePathLabel.Text = "Done!";
+            }));
 
             reader = null;
         }
 
         private void OnProgressUpdate(int val, int max)
         {
-            progressBar1.Maximum = max;
-            progressBar1.Value = val;
+            progressBar_Macro.Invoke((MethodInvoker)(() => 
+                {
+                    progressBar_Macro.Maximum = max;
+                    progressBar_Macro.Value = val;
+                }));
+        }
+
+        public static void AddToLog(string log)
+        {
+            Instance.DebugLog.Invoke((MethodInvoker)(() =>
+            {
+                Instance.DebugLog.AppendText(log + Environment.NewLine);
+
+                //move the caret to the end of the text
+                Instance.DebugLog.SelectionStart = Instance.DebugLog.TextLength;
+                //scroll to the caret
+                Instance.DebugLog.ScrollToCaret();
+            }));
         }
     }
 }

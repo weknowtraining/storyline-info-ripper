@@ -62,12 +62,6 @@
     <Compile Include="StoryReader.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\StorylineRipper.Common\StorylineRipper.Common.csproj">
-      <Project>{8156b769-6596-4c14-93cf-13caca15eaf0}</Project>
-      <Name>StorylineRipper.Common</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -17,12 +17,14 @@ namespace StorylineRipper.Core
         {
             this.reader = reader;
             story = storyXml.Deserialize<StoryContent>();
-            
+            MainForm.AddToLog("story.xml manifest deserialized.");
             rels = relsXml.Deserialize<RelationsContent>();
+            MainForm.AddToLog("_rels.xml manifest deserialized.");
         }
 
         public void ParseData(Action<int, int> OnProgressUpdated)
         {
+            MainForm.AddToLog("Preparing to parse.");
             OnProgressUpdated.Invoke(0, 0);
             int slideCount = 0;
             int currSlide = 0;
@@ -33,6 +35,8 @@ namespace StorylineRipper.Core
                 {
                     slideCount++;
                 }
+
+            MainForm.AddToLog("Gaining Insight on workload.");
 
             // for every slide within every scene...
             for (int x = 0; x < story.Scenes.Length; x++)
@@ -47,11 +51,15 @@ namespace StorylineRipper.Core
                     SlideContent content = reader.GetXmlTextAtPath(slide.Path.TrimStart('/')).Deserialize<SlideContent>();
                     slide.Name = content.Name;
 
+                    MainForm.AddToLog($"Slide path found: {slide.Path}");
+
                     if (content.Notes.Trim() != "")
                     {
                         NoteContent noteContent = content.Notes.Deserialize<NoteContent>();
                         Block[] blocks = noteContent.Blocks.Where(b => b.Span != null).ToArray();
                         StringBuilder stringBuilder = new StringBuilder();
+
+                        MainForm.AddToLog("Notes parsed from xml.");
 
                         int currentListNumber = 1;
                         // For numbered lists
@@ -97,33 +105,38 @@ namespace StorylineRipper.Core
 
                                 stringBuilder.Append(span.Text);
                             }
+                        MainForm.AddToLog($"{blocks.Select(s => s.Span).Count()} spans parsed.");
 
                         slide.Notes = stringBuilder.ToString();
                     }
                     
                     OnProgressUpdated.Invoke(currSlide++, slideCount);
+                    MainForm.AddToLog($"Slide {slide.Index} parsed.");
                 }
+            MainForm.AddToLog("All data parsed to codebase!");
         }
 
         public string GetNarrationReport()
         {
             StringBuilder stringBuilder = new StringBuilder();
-
+            MainForm.AddToLog("Beginning translation to narration report.");
             // for every slide within every scene...
             for (int x = 0; x < story.Scenes.Length; x++)
             {
                 stringBuilder.AppendLine($"[{story.Scenes[x].Name}]");
+                MainForm.AddToLog($"Translating [{story.Scenes[x].Name}]");
 
                 for (int y = 0; y < story.Scenes[x].Slides.Length; y++)
                 {
                     if (story.Scenes[x].Slides[y].Notes == null || story.Scenes[x].Slides[y].Notes.Trim() == "")
                         continue; // Just skip writing the notes if there aren't any.
+                    MainForm.AddToLog($"Translating -{story.Scenes[x].Slides[y].Index}-");
 
                     stringBuilder.AppendLine($"----{story.Scenes[x].Slides[y].Index}----");
                     stringBuilder.AppendLine(story.Scenes[x].Slides[y].Notes + "\n");
                 }
             }
-
+            MainForm.AddToLog("Translation Complete");
             return stringBuilder.ToString();
         }
     }

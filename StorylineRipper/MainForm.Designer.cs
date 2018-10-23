@@ -29,9 +29,11 @@
         private void InitializeComponent()
         {
             this.OpenFileButton = new System.Windows.Forms.Button();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.progressBar_Macro = new System.Windows.Forms.ProgressBar();
             this.FilePathLabel = new System.Windows.Forms.Label();
             this.GenNarrationButton = new System.Windows.Forms.Button();
+            this.progressBar_micro = new System.Windows.Forms.ProgressBar();
+            this.DebugLog = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // OpenFileButton
@@ -44,12 +46,12 @@
             this.OpenFileButton.UseVisualStyleBackColor = true;
             this.OpenFileButton.Click += new System.EventHandler(this.OpenFileButton_Click);
             // 
-            // progressBar1
+            // progressBar_Macro
             // 
-            this.progressBar1.Location = new System.Drawing.Point(93, 46);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(180, 23);
-            this.progressBar1.TabIndex = 1;
+            this.progressBar_Macro.Location = new System.Drawing.Point(93, 46);
+            this.progressBar_Macro.Name = "progressBar_Macro";
+            this.progressBar_Macro.Size = new System.Drawing.Size(180, 23);
+            this.progressBar_Macro.TabIndex = 1;
             // 
             // FilePathLabel
             // 
@@ -71,14 +73,32 @@
             this.GenNarrationButton.UseVisualStyleBackColor = true;
             this.GenNarrationButton.Click += new System.EventHandler(this.GenNarrationButton_Click);
             // 
+            // progressBar_micro
+            // 
+            this.progressBar_micro.Location = new System.Drawing.Point(12, 294);
+            this.progressBar_micro.Name = "progressBar_micro";
+            this.progressBar_micro.Size = new System.Drawing.Size(261, 13);
+            this.progressBar_micro.TabIndex = 4;
+            // 
+            // DebugLog
+            // 
+            this.DebugLog.Location = new System.Drawing.Point(12, 75);
+            this.DebugLog.Multiline = true;
+            this.DebugLog.Name = "DebugLog";
+            this.DebugLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.DebugLog.Size = new System.Drawing.Size(261, 213);
+            this.DebugLog.TabIndex = 5;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(285, 81);
+            this.ClientSize = new System.Drawing.Size(285, 317);
+            this.Controls.Add(this.DebugLog);
+            this.Controls.Add(this.progressBar_micro);
             this.Controls.Add(this.GenNarrationButton);
             this.Controls.Add(this.FilePathLabel);
-            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.progressBar_Macro);
             this.Controls.Add(this.OpenFileButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "MainForm";
@@ -92,9 +112,11 @@
         #endregion
 
         private System.Windows.Forms.Button OpenFileButton;
-        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.ProgressBar progressBar_Macro;
         private System.Windows.Forms.Label FilePathLabel;
         private System.Windows.Forms.Button GenNarrationButton;
+        private System.Windows.Forms.ProgressBar progressBar_micro;
+        private System.Windows.Forms.TextBox DebugLog;
     }
 }
 
