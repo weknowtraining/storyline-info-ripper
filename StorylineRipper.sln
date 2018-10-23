@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorylineRipper", "ZipReadWrite\StorylineRipper.csproj", "{89EB7F1F-8422-4CF6-982E-E5F6913516B4}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorylineRipper.Common", "StorylineRipper.Common\StorylineRipper.Common.csproj", "{8156B769-6596-4C14-93CF-13CACA15EAF0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorylineRipper.Core", "StorylineRipper.Core\StorylineRipper.Core.csproj", "{B3A641D1-9EF6-4C69-8B27-EEA7048191A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorylineRipper", "StorylineRipper\StorylineRipper.csproj", "{89EB7F1F-8422-4CF6-982E-E5F6913516B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{89EB7F1F-8422-4CF6-982E-E5F6913516B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{89EB7F1F-8422-4CF6-982E-E5F6913516B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{89EB7F1F-8422-4CF6-982E-E5F6913516B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{89EB7F1F-8422-4CF6-982E-E5F6913516B4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8156B769-6596-4C14-93CF-13CACA15EAF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8156B769-6596-4C14-93CF-13CACA15EAF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8156B769-6596-4C14-93CF-13CACA15EAF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -27,6 +23,10 @@ Global
 		{B3A641D1-9EF6-4C69-8B27-EEA7048191A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3A641D1-9EF6-4C69-8B27-EEA7048191A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3A641D1-9EF6-4C69-8B27-EEA7048191A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89EB7F1F-8422-4CF6-982E-E5F6913516B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89EB7F1F-8422-4CF6-982E-E5F6913516B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89EB7F1F-8422-4CF6-982E-E5F6913516B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89EB7F1F-8422-4CF6-982E-E5F6913516B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

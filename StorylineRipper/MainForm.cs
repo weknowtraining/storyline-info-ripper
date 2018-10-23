@@ -49,15 +49,15 @@ namespace StorylineRipper
 
         private void GenerationComplete()
         {
-            FilePathLabel.Text = "Done!";
-
-            // Open a folder view of the output
+                        // Open a folder view of the output
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
             {
                 FileName = Path.GetDirectoryName(reader.OutputPath),
                 UseShellExecute = true,
                 Verb = "open"
             });
+
+            FilePathLabel.Text = "Done!";
         }
     }
 }
