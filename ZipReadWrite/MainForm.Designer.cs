@@ -30,7 +30,6 @@
         {
             this.OpenFileButton = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.TestBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // OpenFileButton
@@ -51,25 +50,14 @@
             this.progressBar1.TabIndex = 1;
             this.progressBar1.Click += new System.EventHandler(this.progressBar1_Click);
             // 
-            // TestBtn
-            // 
-            this.TestBtn.Location = new System.Drawing.Point(12, 41);
-            this.TestBtn.Name = "TestBtn";
-            this.TestBtn.Size = new System.Drawing.Size(75, 23);
-            this.TestBtn.TabIndex = 2;
-            this.TestBtn.Text = "Test";
-            this.TestBtn.UseVisualStyleBackColor = true;
-            this.TestBtn.Click += new System.EventHandler(this.TestBtn_Click);
-            // 
-            // Form1
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(285, 81);
-            this.Controls.Add(this.TestBtn);
+            this.ClientSize = new System.Drawing.Size(285, 47);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.OpenFileButton);
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
@@ -80,7 +68,6 @@
 
         private System.Windows.Forms.Button OpenFileButton;
         private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.Button TestBtn;
     }
 }
 

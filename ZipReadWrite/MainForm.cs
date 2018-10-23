@@ -29,21 +29,15 @@ namespace StorylineRipper
         private void button1_Click(object sender, EventArgs e)
         {
             StoryReader reader = new StoryReader(progressBar1);
-            reader.SetFilePath();
-            reader.LoadFile();
-            reader.ReadFile();
+            if (reader.SetFilePath() && reader.LoadFile())
+                reader.ReadFile();
+
+            reader.WriteNarrationReport();
         }
 
         private void progressBar1_Click(object sender, EventArgs e)
         {
 
-        }
-
-        private void TestBtn_Click(object sender, EventArgs e)
-        {
-            StoryReader reader = new StoryReader(progressBar1);
-            if (reader.SetFilePath() && reader.LoadFile())
-                reader.ReadFile();
         }
     }
 }

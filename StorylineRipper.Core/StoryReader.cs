@@ -18,6 +18,8 @@ namespace StorylineRipper.Core
     {
         public string PathToFile { get; private set; }
 
+        public SlideManifest manifest;
+
         private ProgressBar progressBar;
         private ZipFile loadedFile;
 
@@ -82,84 +84,37 @@ namespace StorylineRipper.Core
 
         public void ReadFile()
         {
-            SlideManifest manifest = new SlideManifest(this, GetXmlTextAtPath("story/story.xml"), GetXmlTextAtPath("story/_rels/story.xml.rels"));
+            manifest = new SlideManifest(this, GetXmlTextAtPath("story/story.xml"), GetXmlTextAtPath("story/_rels/story.xml.rels"));
 
+            manifest.ParseData(progressBar);
         }
 
-        //public void ReadFile()
-        //{
-        //    string noteText = ""; // Full note text
-
-        //    // Progress bar stuff
-        //    progressBar.Maximum = loadedFile.Count;
-        //    progressBar.Value = 0;
-        //    progressBar.Step = 1;
-
-        //    // Get each file in the zip
-        //    foreach (ZipEntry entry in loadedFile)
-        //    {
-        //        if (Path.GetExtension(entry.FileName) != ".xml") //If it's not xml, skip to next file
-        //            continue;
-
-        //        string text;
-        //        // Read all the text in the file
-        //        using (StreamReader reader = new StreamReader(entry.OpenReader(), Encoding.UTF8))
-        //        {
-        //            text = reader.ReadToEnd();
-        //        }
-
-        //        // Load text as xml
-        //        XmlDocument xmlDoc = new XmlDocument();
-        //        xmlDoc.LoadXml(text);
-
-        //        XmlNodeList noteList = xmlDoc.GetElementsByTagName("note");
-        //        foreach (XmlNode node in noteList)
-        //        {
-        //            if (node.InnerText == "")
-        //                continue;
-
-        //            // The inner xml is all... I don't even know wtf they're doing here
-        //            // but this makes it work.
-        //            // It's some sort of xml markup I think.
-        //            string notesXML = node.InnerText;
-        //            notesXML.Replace("&lt;", "<");
-        //            notesXML.Replace("&gt;", ">");
-
-        //            XmlDocument innerDoc = new XmlDocument();
-        //            innerDoc.LoadXml(notesXML);
-
-        //            XmlNodeList spanList = innerDoc.SelectNodes("//Span");
-
-        //            StringBuilder stringBuilder = new StringBuilder();
-        //            stringBuilder.AppendLine(entry.FileName);
-
-        //            for (int i = 0; i < spanList.Count; i++)
-        //            {
-        //                stringBuilder.AppendLine(spanList[i].Attributes["Text"].Value);
-        //            }
-
-        //            stringBuilder.AppendLine("-");
-        //            noteText += stringBuilder.ToString();
-
-        //            progressBar.PerformStep();
-        //        }
-        //    }
-
-        //    // Finish up
-        //    progressBar.Value = progressBar.Maximum;
-
-        //    WriteFile(noteText);
-        //}
-
-        public void WriteFile(string contents)
+        public void WriteNarrationReport()
         {
-            string newPath = Path.GetDirectoryName(PathToFile) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(PathToFile) + "-output.txt";
+            WriteFile(manifest.GetNarrationReport());
+        }
+
+        private void WriteFile(string contents)
+        {
+            progressBar.Value = progressBar.Minimum;
+            progressBar.Maximum = 3;
+            progressBar.Step = 1;
+            progressBar.PerformStep();
+
+            string newPath = Path.GetDirectoryName(PathToFile) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(PathToFile) + "-NarrationReport.txt";
             File.Create(newPath).Close();
+
+            progressBar.PerformStep();
 
             using (var writer = new StreamWriter(newPath))
             {
                 writer.Write(contents);
             }
+
+            loadedFile.Dispose();
+
+            //Finish up
+            progressBar.Value = progressBar.Maximum;
         }
 
     }
