@@ -41,15 +41,21 @@ namespace StorylineRipper
 
         private void GenNarrationButton_Click(object sender, EventArgs e)
         {
+            FilePathLabel.Text = "Working...";
             if (reader.LoadFile())
+            {
                 reader.ReadFile();
-
-            reader.WriteNarrationReport();
+                reader.WriteNarrationReport();
+            }
+            else
+            {
+                FilePathLabel.Text = "File couldn't be loaded!";
+            }
         }
 
         private void GenerationComplete()
         {
-                        // Open a folder view of the output
+            // Open a folder view of the output
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
             {
                 FileName = Path.GetDirectoryName(reader.OutputPath),
@@ -58,6 +64,8 @@ namespace StorylineRipper
             });
 
             FilePathLabel.Text = "Done!";
+
+            reader = null;
         }
     }
 }

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Xml.Serialization;
 
-using StorylineRipper.Common.Extensions;
-
-namespace StorylineRipper.Core
+namespace StorylineRipper.Core.Content
 {
     /// <remarks/>
     [Serializable]

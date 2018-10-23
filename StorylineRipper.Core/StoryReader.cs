@@ -94,17 +94,17 @@ namespace StorylineRipper.Core
 
         public void WriteNarrationReport()
         {
-            WriteFile(manifest.GetNarrationReport());
+            WriteFile(manifest.GetNarrationReport(), "-NarrationReport.txt");
         }
 
-        private void WriteFile(string contents)
+        private void WriteFile(string contents, string fileSuffix)
         {
             progressBar.Value = progressBar.Minimum;
             progressBar.Maximum = 3;
             progressBar.Step = 1;
             progressBar.PerformStep();
 
-            OutputPath = Path.GetDirectoryName(PathToFile) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(PathToFile) + "-NarrationReport.txt";
+            OutputPath = Path.GetDirectoryName(PathToFile) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(PathToFile) + fileSuffix;
             File.Create(OutputPath).Dispose();
 
             progressBar.PerformStep();
