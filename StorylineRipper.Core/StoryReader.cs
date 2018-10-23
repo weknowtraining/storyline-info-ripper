@@ -16,12 +16,12 @@ namespace StorylineRipper.Core
 {
     public class StoryReader
     {
-        public string PathToFile { get; private set; }
+        public event Action OnGenerationComplete;
+
+        public string PathToFile { get; set; }
         public string OutputPath { get; private set; }
 
-        public SlideManifest manifest;
-
-        public event Action OnGenerationComplete;
+        public SlideParser manifest;
 
         private ProgressBar progressBar;
         private ZipFile loadedFile;
@@ -30,24 +30,6 @@ namespace StorylineRipper.Core
         {
             this.progressBar = progressBar;
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); // Needed to read zip file
-        }
-
-        /// <summary>
-        /// Opens a dialog box to allow the user to select the file to open.
-        /// </summary>
-        /// <returns>True if valid file found, otherwise false</returns>
-        public bool SetFilePath()
-        {
-            PathToFile = null;
-
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "Storyline Story|*.story|All Files|*.*";
-
-            if (dialog.ShowDialog() != DialogResult.OK)
-                return false;
-
-            PathToFile = dialog.FileName;
-            return true;
         }
 
         /// <summary>
@@ -87,8 +69,7 @@ namespace StorylineRipper.Core
 
         public void ReadFile()
         {
-            manifest = new SlideManifest(this, GetXmlTextAtPath("story/story.xml"), GetXmlTextAtPath("story/_rels/story.xml.rels"));
-
+            manifest = new SlideParser(this, GetXmlTextAtPath("story/story.xml"), GetXmlTextAtPath("story/_rels/story.xml.rels"));
             manifest.ParseData(progressBar);
         }
 

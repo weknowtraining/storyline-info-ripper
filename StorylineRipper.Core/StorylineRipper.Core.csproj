@@ -58,7 +58,7 @@
     <Compile Include="Content\NoteContent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Content\SlideContent.cs" />
-    <Compile Include="SlideManifest.cs" />
+    <Compile Include="SlideParser.cs" />
     <Compile Include="StoryReader.cs" />
   </ItemGroup>
   <ItemGroup>

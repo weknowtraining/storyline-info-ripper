@@ -6,13 +6,13 @@ using StorylineRipper.Core.Content;
 
 namespace StorylineRipper.Core
 {
-    public class SlideManifest
+    public class SlideParser
     {
         public StoryContent story;
         private RelationsContent rels;
         private StoryReader reader;
 
-        public SlideManifest(StoryReader reader, string storyXml, string relsXml)
+        public SlideParser(StoryReader reader, string storyXml, string relsXml)
         {
             this.reader = reader;
             story = storyXml.Deserialize<StoryContent>();
@@ -79,9 +79,8 @@ namespace StorylineRipper.Core
                                     }
                                     else
                                     {
-                                        /* I don't know what other list types there are,
-                                         * but it's safe to say they aren't numbered.
-                                         */
+                                        // I don't know what other list types there are,
+                                        // but it's safe to say they aren't numbered.
                                         currentListNumber = 1;
                                     }
                                 }
@@ -117,8 +116,6 @@ namespace StorylineRipper.Core
                 {
                     if (story.Scenes[x].Slides[y].Notes == null || story.Scenes[x].Slides[y].Notes.Trim() == "")
                         continue; // Just skip writing the notes if there aren't any.
-
-                    //stringBuilder.Append("\n");
 
                     stringBuilder.AppendLine($"----{story.Scenes[x].Slides[y].Index}----");
                     stringBuilder.AppendLine(story.Scenes[x].Slides[y].Notes + "\n");

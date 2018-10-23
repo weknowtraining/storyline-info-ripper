@@ -33,8 +33,12 @@ namespace StorylineRipper
             reader = new StoryReader(progressBar1);
             reader.OnGenerationComplete += GenerationComplete;
 
-            isPathValid = reader.SetFilePath();
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "Storyline Story|*.story|All Files|*.*";
 
+            isPathValid = (dialog.ShowDialog() == DialogResult.OK);
+
+            reader.PathToFile = dialog.FileName;
             FilePathLabel.Text = Path.GetFileName(reader.PathToFile);
             GenNarrationButton.Enabled = isPathValid;
         }
