@@ -85,6 +85,7 @@
             this.DebugLog.Location = new System.Drawing.Point(12, 75);
             this.DebugLog.Multiline = true;
             this.DebugLog.Name = "DebugLog";
+            this.DebugLog.ReadOnly = true;
             this.DebugLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.DebugLog.Size = new System.Drawing.Size(261, 213);
             this.DebugLog.TabIndex = 5;
