@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 using System.Xml;
 
 using StorylineRipper.Core;
@@ -21,14 +21,19 @@ namespace StorylineRipper.Core
         public string PathToFile { get; set; }
         public string OutputPath { get; private set; }
 
-        public SlideParser manifest;
+        public SlideParser storyParser;
 
-        private ProgressBar progressBar;
+        /// <summary>
+        /// int1 is current value, int2 is max value
+        /// </summary>
+        private Action<int, int> UpdateProgress;
+
+        //private ProgressBar progressBar;
         private ZipFile loadedFile;
 
-        public StoryReader (ProgressBar progressBar)
+        public StoryReader (Action<int, int> OnProgressUpdated)
         {
-            this.progressBar = progressBar;
+            this.UpdateProgress = OnProgressUpdated;
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); // Needed to read zip file
         }
 
@@ -69,26 +74,23 @@ namespace StorylineRipper.Core
 
         public void ReadFile()
         {
-            manifest = new SlideParser(this, GetXmlTextAtPath("story/story.xml"), GetXmlTextAtPath("story/_rels/story.xml.rels"));
-            manifest.ParseData(progressBar);
+            storyParser = new SlideParser(this, GetXmlTextAtPath("story/story.xml"), GetXmlTextAtPath("story/_rels/story.xml.rels"));
+            storyParser.ParseData(UpdateProgress);
         }
 
         public void WriteNarrationReport()
         {
-            WriteFile(manifest.GetNarrationReport(), "-NarrationReport.txt");
+            WriteFile(storyParser.GetNarrationReport(), "-NarrationReport.txt");
         }
 
         private void WriteFile(string contents, string fileSuffix)
         {
-            progressBar.Value = progressBar.Minimum;
-            progressBar.Maximum = 3;
-            progressBar.Step = 1;
-            progressBar.PerformStep();
+            UpdateProgress.Invoke(1, 3);
 
             OutputPath = Path.GetDirectoryName(PathToFile) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(PathToFile) + fileSuffix;
             File.Create(OutputPath).Dispose();
 
-            progressBar.PerformStep();
+            UpdateProgress.Invoke(2, 3);
 
             using (var writer = new StreamWriter(OutputPath))
             {
@@ -98,10 +100,9 @@ namespace StorylineRipper.Core
             loadedFile.Dispose();
 
             //Finish up
-            progressBar.Value = progressBar.Maximum;
+            UpdateProgress.Invoke(3, 3);
 
-            if (OnGenerationComplete != null)
-                OnGenerationComplete.Invoke();
+            OnGenerationComplete?.Invoke();
         }
 
     }

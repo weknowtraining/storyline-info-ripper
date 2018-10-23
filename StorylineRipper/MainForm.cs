@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using StorylineRipper.Core;
+using System.Threading;
 
 namespace StorylineRipper
 {
@@ -17,6 +18,8 @@ namespace StorylineRipper
     {
         private bool isPathValid = false;
         private StoryReader reader;
+
+        Thread generatorThread;
 
         public MainForm()
         {
@@ -30,7 +33,7 @@ namespace StorylineRipper
 
         private void OpenFileButton_Click(object sender, EventArgs e)
         {
-            reader = new StoryReader(progressBar1);
+            reader = new StoryReader(OnProgressUpdate);
             reader.OnGenerationComplete += GenerationComplete;
 
             OpenFileDialog dialog = new OpenFileDialog();
@@ -48,13 +51,22 @@ namespace StorylineRipper
             FilePathLabel.Text = "Working...";
             if (reader.LoadFile())
             {
-                reader.ReadFile();
-                reader.WriteNarrationReport();
+                generatorThread = new Thread(
+                    new ThreadStart(HandleNarrationGeneration));
+                generatorThread.IsBackground = true;
+                generatorThread.Start();
             }
             else
             {
                 FilePathLabel.Text = "File couldn't be loaded!";
             }
+        }
+
+        private void HandleNarrationGeneration()
+        {
+            reader.OnGenerationComplete += GenerationComplete;
+            reader.ReadFile();
+            reader.WriteNarrationReport();
         }
 
         private void GenerationComplete()
@@ -70,6 +82,12 @@ namespace StorylineRipper
             FilePathLabel.Text = "Done!";
 
             reader = null;
+        }
+
+        private void OnProgressUpdate(int val, int max)
+        {
+            progressBar1.Maximum = max;
+            progressBar1.Value = val;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 
 using StorylineRipper.Common.Extensions;
@@ -19,17 +20,17 @@ namespace StorylineRipper.Core
             rels = relsXml.Deserialize<RelationsContent>();
         }
 
-        public void ParseData(System.Windows.Forms.ProgressBar progressBar)
+        public void ParseData(Action<int, int> OnProgressUpdated)
         {
-            progressBar.Maximum = 0;
-            progressBar.Step = 1;
-            progressBar.Value = 0;
+            OnProgressUpdated.Invoke(0, 0);
+            int slideCount = 0;
+            int currSlide = 0;
             
             // Peek ahead to see how many slides we will be parsing
             for (int x = 0; x < story.Scenes.Length; x++)
                 for (int y = 0; y < story.Scenes[x].Slides.Length; y++)
                 {
-                    progressBar.Maximum++;
+                    slideCount++;
                 }
 
             // for every slide within every scene...
@@ -98,8 +99,8 @@ namespace StorylineRipper.Core
 
                         slide.Notes = stringBuilder.ToString();
                     }
-
-                    progressBar.PerformStep();
+                    
+                    OnProgressUpdated.Invoke(currSlide++, slideCount);
                 }
         }
 
