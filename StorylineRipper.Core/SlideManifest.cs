@@ -56,7 +56,8 @@ namespace StorylineRipper.Core
                         int currentListNumber = 1; // For numbered lists
                                                    // For every numbered list, this number goes up,
                                                    // but when the numbered list is broken it resets back to one
-
+                        
+                        // For every span within every block...
                         for (int u = 0; u < blocks.Length; u++)
                             for (int v = 0; v < blocks[u].Span.Length; v++)
                             {
@@ -70,12 +71,12 @@ namespace StorylineRipper.Core
                                 {
                                     if (block.Style.ListStyle.ListType == "Bullet")
                                     {
-                                        stringBuilder.Append(block.Style.ListStyle.BulletChar + " ");
+                                        stringBuilder.Append($"{block.Style.ListStyle.BulletChar} ");
                                         currentListNumber = 1; // Reset
                                     }
                                     else if (block.Style.ListStyle.ListType.Contains("ListNumbered"))
                                     {
-                                        stringBuilder.Append(currentListNumber++ + ". ");
+                                        stringBuilder.Append($"{currentListNumber++}. ");
                                     }
                                     else
                                     {
@@ -111,7 +112,7 @@ namespace StorylineRipper.Core
             // for every slide within every scene...
             for (int x = 0; x < story.Scenes.Length; x++)
             {
-                stringBuilder.AppendLine("[" + story.Scenes[x].Name + "]");
+                stringBuilder.AppendLine($"[{story.Scenes[x].Name}]");
 
                 for (int y = 0; y < story.Scenes[x].Slides.Length; y++)
                 {
@@ -120,7 +121,7 @@ namespace StorylineRipper.Core
 
                     //stringBuilder.Append("\n");
 
-                    stringBuilder.AppendLine("----" + story.Scenes[x].Slides[y].Index + "----");
+                    stringBuilder.AppendLine($"----{story.Scenes[x].Slides[y].Index}----");
                     stringBuilder.AppendLine(story.Scenes[x].Slides[y].Notes + "\n");
                 }
             }

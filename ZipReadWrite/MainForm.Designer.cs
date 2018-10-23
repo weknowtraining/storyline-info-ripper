@@ -58,7 +58,7 @@
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.OpenFileButton);
             this.Name = "MainForm";
-            this.Text = "Form1";
+            this.Text = "Story Ripper";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
 
