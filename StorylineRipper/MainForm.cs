@@ -36,7 +36,7 @@ namespace StorylineRipper
 
         private void OpenFileButton_Click(object sender, EventArgs e)
         {
-            reader = new StoryReader(OnProgressUpdate);
+            reader = new StoryReader();
 
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Filter = "Storyline Story|*.story|All Files|*.*";
@@ -53,7 +53,8 @@ namespace StorylineRipper
         private void GenNarrationButton_Click(object sender, EventArgs e)
         {
             FilePathLabel.Text = "Working...";
-            AddToLog("Beginning workload...");
+            UpdateMicroProgress(0, 1);
+            UpdateMacroProgress(0, 5);
             if (reader.LoadFile())
             {
                 reader.OnGenerationComplete += GenerationComplete;
@@ -61,6 +62,7 @@ namespace StorylineRipper
                     new ThreadStart(HandleNarrationGeneration));
                 generatorThread.IsBackground = true;
                 generatorThread.Start();
+                AddToLog("Beginning workload...");
             }
             else
             {
@@ -91,15 +93,28 @@ namespace StorylineRipper
             }));
 
             reader = null;
+            GenNarrationButton.Invoke((MethodInvoker)(() =>
+            {
+                GenNarrationButton.Enabled = false;
+            }));
         }
 
-        private void OnProgressUpdate(int val, int max)
+        public static void UpdateMacroProgress(int val, int max)
         {
-            progressBar_Macro.Invoke((MethodInvoker)(() => 
+            Instance.progressBar_Macro.Invoke((MethodInvoker)(() => 
                 {
-                    progressBar_Macro.Maximum = max;
-                    progressBar_Macro.Value = val;
+                    Instance.progressBar_Macro.Maximum = max;
+                    Instance.progressBar_Macro.Value = val;
                 }));
+        }
+
+        public static void UpdateMicroProgress(int val, int max)
+        {
+            Instance.progressBar_Micro.Invoke((MethodInvoker)(() =>
+            {
+                Instance.progressBar_Micro.Maximum = max;
+                Instance.progressBar_Micro.Value = val;
+            }));
         }
 
         public static void AddToLog(string log)
@@ -107,6 +122,24 @@ namespace StorylineRipper
             Instance.DebugLog.Invoke((MethodInvoker)(() =>
             {
                 Instance.DebugLog.AppendText(log + Environment.NewLine);
+
+                //move the caret to the end of the text
+                Instance.DebugLog.SelectionStart = Instance.DebugLog.TextLength;
+                //scroll to the caret
+                Instance.DebugLog.ScrollToCaret();
+            }));
+        }
+
+        public static void AddErrorToLog(string log)
+        {
+            Instance.DebugLog.Invoke((MethodInvoker)(() =>
+            {
+                Instance.DebugLog.SelectionStart = Instance.DebugLog.TextLength;
+                Instance.DebugLog.SelectionLength = 0;
+
+                Instance.DebugLog.SelectionColor = Color.Red;
+                Instance.DebugLog.AppendText($"{log}{Environment.NewLine}");
+                Instance.DebugLog.SelectionColor = Instance.DebugLog.ForeColor;
 
                 //move the caret to the end of the text
                 Instance.DebugLog.SelectionStart = Instance.DebugLog.TextLength;

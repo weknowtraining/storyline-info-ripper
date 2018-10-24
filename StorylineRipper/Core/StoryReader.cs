@@ -23,17 +23,11 @@ namespace StorylineRipper.Core
 
         public SlideParser storyParser;
 
-        /// <summary>
-        /// int1 is current value, int2 is max value
-        /// </summary>
-        private Action<int, int> UpdateProgress;
-
         //private ProgressBar progressBar;
         private ZipFile loadedFile;
 
-        public StoryReader (Action<int, int> OnProgressUpdated)
+        public StoryReader ()
         {
-            this.UpdateProgress = OnProgressUpdated;
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); // Needed to read zip file
         }
 
@@ -45,7 +39,22 @@ namespace StorylineRipper.Core
         {
             if (PathToFile != null && PathToFile.Length > 0)
             {
-                loadedFile = ZipFile.Read(PathToFile);
+                try
+                {
+                    loadedFile = ZipFile.Read(PathToFile);
+
+                    if (!loadedFile.ContainsEntry("story/story.xml"))
+                        throw new ZipException("File is not a storyline file");
+                }
+                catch(ZipException e)
+                {
+                    MainForm.AddToLog($"\n({e.Message})\n");
+                    MainForm.AddErrorToLog("Selected file is not a valid storyline file!");
+                    return false;
+                }
+                
+                MainForm.UpdateMicroProgress(1, 1);
+                MainForm.UpdateMacroProgress(1, 5);
                 return true;
             }
             else
@@ -75,24 +84,36 @@ namespace StorylineRipper.Core
         public void ReadFile()
         {
             storyParser = new SlideParser(this, GetXmlTextAtPath("story/story.xml"), GetXmlTextAtPath("story/_rels/story.xml.rels"));
-            storyParser.ParseData(UpdateProgress);
+            MainForm.UpdateMacroProgress(2, 5);
+
+            storyParser.ParseData();
+            MainForm.UpdateMacroProgress(3, 5);
         }
 
         public void WriteNarrationReport()
         {
-            WriteFile(storyParser.GetNarrationReport(), "-NarrationReport.txt");
+            OutputPath = Path.GetDirectoryName(PathToFile) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(PathToFile) + "-NarrationReport.docx";
+            DocXWriter writer = new DocXWriter(OutputPath);
+
+            writer.GenerateNarrationReport(storyParser.story);
+
+            //string report = storyParser.GetNarrationReport();
+            //MainForm.UpdateMacroProgress(4, 5);
+
+            //WriteFile(report, "-NarrationReport.txt");
+            MainForm.UpdateMacroProgress(5, 5);
+            OnGenerationComplete?.Invoke();
         }
 
-        private void WriteFile(string contents, string fileSuffix)
+        private void WriteFile(string contents)
         {
             MainForm.AddToLog("");
             MainForm.AddToLog("Writing to file...");
-            UpdateProgress.Invoke(1, 3);
+            MainForm.UpdateMicroProgress(1, 3);
 
-            OutputPath = Path.GetDirectoryName(PathToFile) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(PathToFile) + fileSuffix;
             File.Create(OutputPath).Dispose();
 
-            UpdateProgress.Invoke(2, 3);
+            MainForm.UpdateMicroProgress(2, 3);
 
             using (var writer = new StreamWriter(OutputPath))
             {
@@ -101,12 +122,8 @@ namespace StorylineRipper.Core
 
             loadedFile.Dispose();
 
-            //Finish up
-            UpdateProgress.Invoke(3, 3);
-
-            OnGenerationComplete?.Invoke();
-
             MainForm.AddToLog("Done!");
+            MainForm.UpdateMicroProgress(3, 3);
         }
 
     }

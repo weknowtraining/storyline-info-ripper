@@ -15,17 +15,21 @@ namespace StorylineRipper.Core
 
         public SlideParser(StoryReader reader, string storyXml, string relsXml)
         {
+            MainForm.UpdateMicroProgress(0, 2);
             this.reader = reader;
             story = storyXml.Deserialize<StoryContent>();
             MainForm.AddToLog("story.xml manifest deserialized.");
+            MainForm.UpdateMicroProgress(1, 2);
+
             rels = relsXml.Deserialize<RelationsContent>();
             MainForm.AddToLog("_rels.xml manifest deserialized.");
+            MainForm.UpdateMicroProgress(2, 2);
         }
 
-        public void ParseData(Action<int, int> OnProgressUpdated)
+        public void ParseData()
         {
             MainForm.AddToLog("Preparing to parse.");
-            OnProgressUpdated.Invoke(0, 0);
+            MainForm.UpdateMicroProgress(0, 0);
             int slideCount = 0;
             int currSlide = 0;
             
@@ -105,21 +109,32 @@ namespace StorylineRipper.Core
 
                                 stringBuilder.Append(span.Text);
                             }
-                        MainForm.AddToLog($"{blocks.Select(s => s.Span).Count()} spans parsed.");
+                        MainForm.AddToLog($"--{blocks.Select(s => s.Span).Count()} spans parsed.");
 
                         slide.Notes = stringBuilder.ToString();
                     }
                     
-                    OnProgressUpdated.Invoke(currSlide++, slideCount);
                     MainForm.AddToLog($"Slide {slide.Index} parsed.");
+                    MainForm.UpdateMicroProgress(++currSlide, slideCount);
                 }
+
             MainForm.AddToLog("All data parsed to codebase!");
+            MainForm.UpdateMicroProgress(slideCount, slideCount);
         }
 
         public string GetNarrationReport()
         {
             StringBuilder stringBuilder = new StringBuilder();
             MainForm.AddToLog("Beginning translation to narration report.");
+            MainForm.UpdateMicroProgress(0, 1);
+
+            int totalSlides = 0;
+            int currSlide = 0;
+
+            for (int x = 0; x < story.Scenes.Length; x++)
+                for (int y = 0; y < story.Scenes[x].Slides.Length; y++)
+                    totalSlides++;
+
             // for every slide within every scene...
             for (int x = 0; x < story.Scenes.Length; x++)
             {
@@ -134,9 +149,14 @@ namespace StorylineRipper.Core
 
                     stringBuilder.AppendLine($"----{story.Scenes[x].Slides[y].Index}----");
                     stringBuilder.AppendLine(story.Scenes[x].Slides[y].Notes + "\n");
+
+                    MainForm.UpdateMicroProgress(++currSlide, totalSlides);
                 }
             }
+
             MainForm.AddToLog("Translation Complete");
+            MainForm.UpdateMicroProgress(totalSlides, totalSlides);
+
             return stringBuilder.ToString();
         }
     }

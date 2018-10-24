@@ -32,8 +32,8 @@
             this.progressBar_Macro = new System.Windows.Forms.ProgressBar();
             this.FilePathLabel = new System.Windows.Forms.Label();
             this.GenNarrationButton = new System.Windows.Forms.Button();
-            this.progressBar_micro = new System.Windows.Forms.ProgressBar();
-            this.DebugLog = new System.Windows.Forms.TextBox();
+            this.progressBar_Micro = new System.Windows.Forms.ProgressBar();
+            this.DebugLog = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // OpenFileButton
@@ -73,12 +73,12 @@
             this.GenNarrationButton.UseVisualStyleBackColor = true;
             this.GenNarrationButton.Click += new System.EventHandler(this.GenNarrationButton_Click);
             // 
-            // progressBar_micro
+            // progressBar_Micro
             // 
-            this.progressBar_micro.Location = new System.Drawing.Point(12, 294);
-            this.progressBar_micro.Name = "progressBar_micro";
-            this.progressBar_micro.Size = new System.Drawing.Size(261, 13);
-            this.progressBar_micro.TabIndex = 4;
+            this.progressBar_Micro.Location = new System.Drawing.Point(12, 294);
+            this.progressBar_Micro.Name = "progressBar_Micro";
+            this.progressBar_Micro.Size = new System.Drawing.Size(261, 13);
+            this.progressBar_Micro.TabIndex = 4;
             // 
             // DebugLog
             // 
@@ -86,7 +86,7 @@
             this.DebugLog.Multiline = true;
             this.DebugLog.Name = "DebugLog";
             this.DebugLog.ReadOnly = true;
-            this.DebugLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.DebugLog.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
             this.DebugLog.Size = new System.Drawing.Size(261, 213);
             this.DebugLog.TabIndex = 5;
             // 
@@ -96,7 +96,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(285, 317);
             this.Controls.Add(this.DebugLog);
-            this.Controls.Add(this.progressBar_micro);
+            this.Controls.Add(this.progressBar_Micro);
             this.Controls.Add(this.GenNarrationButton);
             this.Controls.Add(this.FilePathLabel);
             this.Controls.Add(this.progressBar_Macro);
@@ -116,8 +116,8 @@
         private System.Windows.Forms.ProgressBar progressBar_Macro;
         private System.Windows.Forms.Label FilePathLabel;
         private System.Windows.Forms.Button GenNarrationButton;
-        private System.Windows.Forms.ProgressBar progressBar_micro;
-        private System.Windows.Forms.TextBox DebugLog;
+        private System.Windows.Forms.ProgressBar progressBar_Micro;
+        private System.Windows.Forms.RichTextBox DebugLog;
     }
 }
 
