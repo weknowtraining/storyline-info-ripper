@@ -48,7 +48,7 @@ namespace StorylineRipper.Core
                 {
                     Slide slide = story.Scenes[x].Slides[y];
 
-                    slide.Index = string.Format("{0}.{1}", x + 1, y + 1);
+                    slide.Index = string.Format("{0}.{1}", (x + 1).ToString("D2"), (y + 1).ToString("D2"));
                     slide.Path = rels.Relationships.Single(r => r.Id == slide.Id).Path; // Find this slide within the relationships doc and get the path to it
 
                     // Get relative path to slide

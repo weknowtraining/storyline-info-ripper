@@ -36,28 +36,24 @@ namespace StorylineRipper.Core
             // for every slide within every scene...
             for (int x = 0; x < story.Scenes.Length; x++)
             {
-                output.InsertParagraph($"{story.Scenes[x].Name}", false).Heading(HeadingType.Heading1);
-                
-                //stringBuilder.AppendLine($"[{story.Scenes[x].Name}]");
                 MainForm.AddToLog($"Translating [{story.Scenes[x].Name}]");
+                output.InsertParagraph($"{(x + 1).ToString("D2")} - {story.Scenes[x].Name}", false).Heading(HeadingType.Heading1);
 
                 for (int y = 0; y < story.Scenes[x].Slides.Length; y++)
                 {
                     if (story.Scenes[x].Slides[y].Notes == null || story.Scenes[x].Slides[y].Notes.Trim() == "")
                         continue; // Just skip writing the notes if there aren't any.
+
                     MainForm.AddToLog($"Translating -{story.Scenes[x].Slides[y].Index}-");
 
                     output.InsertParagraph($"{story.Scenes[x].Slides[y].Index}", false).Heading(HeadingType.Heading2);
-                    //stringBuilder.AppendLine($"----{story.Scenes[x].Slides[y].Index}----");
-
                     output.InsertParagraph(story.Scenes[x].Slides[y].Notes, false).IndentationBefore = 1.0f;
-                    //stringBuilder.AppendLine(story.Scenes[x].Slides[y].Notes + "\n");
 
                     MainForm.UpdateMicroProgress(++currSlide, totalSlides);
                 }
             }
             output.Save();
-
+            output.Dispose();
             MainForm.AddToLog("Translation Complete");
             MainForm.UpdateMicroProgress(totalSlides, totalSlides);
         }
