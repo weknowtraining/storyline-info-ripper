@@ -82,7 +82,7 @@ namespace StorylineRipper.Core
             return text;
         }
 
-        public void ReadFile()
+        public void ReadFile(bool useMarkup)
         {
             storyParser = new SlideParser(this, GetXmlTextAtPath("story/story.xml"), GetXmlTextAtPath("story/_rels/story.xml.rels"));
             MainForm.UpdateMacroProgress(2, 5);
@@ -90,20 +90,25 @@ namespace StorylineRipper.Core
             storyParser.ParseData();
             MainForm.UpdateMacroProgress(3, 5);
 
-            //Testing
             NarrationParser narrationParser = new NarrationParser(storyParser.story);
             narrationParser.ParseNotes(false);
         }
 
-        public void WriteNarrationReport()
+        public void WriteNotesReport()
         {
             OutputPath = Path.GetDirectoryName(PathToFile) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(PathToFile);
             DocXWriter writer = new DocXWriter();
-            writer.GenerateNarrationReport(storyParser.story, OutputPath, true);
+            writer.GenerateNotesReport(storyParser.story, OutputPath);
 
-            OutputPath = Path.GetDirectoryName(PathToFile) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(PathToFile) + "-NoteReport.docx";
-            writer = new DocXWriter(OutputPath);
-            writer.GenerateNotesReport(storyParser.story);
+            MainForm.UpdateMacroProgress(5, 5);
+            OnGenerationComplete?.Invoke();
+        }
+
+        public void WriteNarrationReport(bool showContext)
+        {
+            OutputPath = Path.GetDirectoryName(PathToFile) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(PathToFile);
+            DocXWriter writer = new DocXWriter();
+            writer.GenerateNarrationReport(storyParser.story, OutputPath, showContext);
 
             MainForm.UpdateMacroProgress(5, 5);
             OnGenerationComplete?.Invoke();

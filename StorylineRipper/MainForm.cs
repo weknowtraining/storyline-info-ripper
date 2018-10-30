@@ -45,12 +45,13 @@ namespace StorylineRipper
 
             reader.PathToFile = dialog.FileName;
             FilePathLabel.Text = Path.GetFileName(reader.PathToFile);
-            GenNarrationButton.Enabled = isPathValid;
+            GenNotesButton.Enabled = isPathValid;
+            GenNarrButton.Enabled = isPathValid;
 
             AddToLog("File Selected");
         }
 
-        private void GenNarrationButton_Click(object sender, EventArgs e)
+        private void GenNarrButton_Click(object sender, EventArgs e)
         {
             FilePathLabel.Text = "Working...";
             UpdateMicroProgress(0, 1);
@@ -70,12 +71,56 @@ namespace StorylineRipper
             }
         }
 
+        private void GenNotesButton_Click(object sender, EventArgs e)
+        {
+            FilePathLabel.Text = "Working...";
+            UpdateMicroProgress(0, 1);
+            UpdateMacroProgress(0, 5);
+            if (reader.LoadFile())
+            {
+                reader.OnGenerationComplete += GenerationComplete;
+                generatorThread = new Thread(
+                    new ThreadStart(HandleNotesGeneration));
+                generatorThread.IsBackground = true;
+                generatorThread.Start();
+                AddToLog("Beginning workload...");
+            }
+            else
+            {
+                FilePathLabel.Text = "File couldn't be loaded!";
+            }
+        }
+
         private void HandleNarrationGeneration()
         {
             AddToLog("Reading story file...");
-            reader.ReadFile();
+            reader.ReadFile(UseMarkupCheckbox.Checked);
 
-            reader.WriteNarrationReport();
+            try
+            {
+                reader.WriteNarrationReport(ShowContextLinesCheckbox.Checked);
+            }
+            catch(Exception e)
+            {
+                AddErrorToLog(e.Message);
+                AddErrorToLog("An unexpected error has occured. Send the above red text to Kolton");
+            }
+        }
+
+        private void HandleNotesGeneration()
+        {
+            AddToLog("Reading story file...");
+            reader.ReadFile(UseMarkupCheckbox.Checked);
+
+            try
+            {
+                reader.WriteNotesReport();
+            }
+            catch (Exception e)
+            {
+                AddErrorToLog(e.Message);
+                AddErrorToLog("An unexpected error has occured. Send the above red text to Kolton");
+            }
         }
 
         private void GenerationComplete()
@@ -93,10 +138,10 @@ namespace StorylineRipper
                 FilePathLabel.Text = "Done!";
             }));
 
-            reader = null;
-            GenNarrationButton.Invoke((MethodInvoker)(() =>
+            //reader = null;
+            GenNotesButton.Invoke((MethodInvoker)(() =>
             {
-                GenNarrationButton.Enabled = false;
+                //GenNotesButton.Enabled = false;
             }));
         }
 
@@ -118,6 +163,8 @@ namespace StorylineRipper
             }));
         }
 
+        /// <summary> Adds a normal black line to the log </summary>
+        /// <param name="log"></param>
         public static void AddToLog(string log)
         {
             Instance.DebugLog.Invoke((MethodInvoker)(() =>
@@ -131,6 +178,8 @@ namespace StorylineRipper
             }));
         }
 
+        /// <summary> Adds a red highlighted line to the log </summary>
+        /// <param name="log"></param>
         public static void AddErrorToLog(string log)
         {
             Instance.DebugLog.Invoke((MethodInvoker)(() =>
@@ -142,9 +191,9 @@ namespace StorylineRipper
                 Instance.DebugLog.AppendText($"{log}{Environment.NewLine}");
                 Instance.DebugLog.SelectionColor = Instance.DebugLog.ForeColor;
 
-                //move the caret to the end of the text
+                // Move the caret to the end of the text
                 Instance.DebugLog.SelectionStart = Instance.DebugLog.TextLength;
-                //scroll to the caret
+                // Scroll to the caret
                 Instance.DebugLog.ScrollToCaret();
             }));
         }

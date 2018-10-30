@@ -18,14 +18,12 @@ namespace StorylineRipper.Core
 
         public DocXWriter() { }
 
-        public DocXWriter(string filePath)
+        public void GenerateNotesReport(StoryContent story, string filePath)
         {
-            File.Create(filePath).Dispose();
-            output = DocX.Create(filePath);
-        }
+            string reportPath = filePath + $"-NotesReport.docx";
+            File.Create(reportPath).Dispose();
+            output = DocX.Create(reportPath);
 
-        public void GenerateNotesReport(StoryContent story)
-        {
             MainForm.AddToLog("Beginning translation to notes report.");
             MainForm.UpdateMicroProgress(0, 1);
 
@@ -67,6 +65,7 @@ namespace StorylineRipper.Core
             foreach (string name in story.Characters)
                 scripts.Add(name, new List<Line>());
 
+            MainForm.AddToLog($"Parsing lines...");
             // Grabbing all the lines and adding them to my own lists for reference
             for (int x = 0, currSlide = 0; x < story.Scenes.Length; x++)
                 for (int y = 0; y < story.Scenes[x].Slides.Length; y++, currSlide++)
@@ -84,35 +83,71 @@ namespace StorylineRipper.Core
             // For each character...
             foreach (KeyValuePair<string, List<Line>> lines in scripts)
             {
+                MainForm.AddToLog($"Building {lines.Key} report...");
+
                 string reportPath = filePath + $"-NarrationReport[{lines.Key}].docx";
                 File.Create(reportPath).Dispose();
                 output = DocX.Create(reportPath);
 
-                output.InsertParagraph($"{lines.Key}").Heading(HeadingType.Heading1);
+                Formatting format = new Formatting();
+                format.FontFamily = new Xceed.Words.NET.Font("Times New Roman");
+                format.FontColor = Color.Black;
+                format.Size = 12;
+
+                // Document Head
+                output.InsertParagraph($"{Path.GetFileNameWithoutExtension(filePath)} – Narration Report: {lines.Key} (Narrator TBD)").Heading(HeadingType.Heading1);
+                output.InsertParagraph("(new recording - all files)").Bold()
+                    .AppendLine("Microsoft wave,")
+                    .AppendLine("Bit Rate 705kbps,")
+                    .AppendLine("Audio sample size 16 bit, mono")
+                    .AppendLine("Sample rate 44 kHz,")
+                    .AppendLine("Audio Format PCM, ")
+                    .AppendLine("No Extra Chunks.")
+                    .AppendLine($"Begin all file names with \"{lines.Key}_\"").Bold();
+
+                output.AddFooters();
+
+                output.Footers.Even.InsertParagraph($"{Path.GetFileNameWithoutExtension(filePath)} – {lines.Key} (Narrator TBD)").Color(Color.Gray);
+                output.Footers.Odd.InsertParagraph($"{Path.GetFileNameWithoutExtension(filePath)} – {lines.Key} (Narrator TBD)").Color(Color.Gray);
+
+                bool isContinuation = false; // Used to combine multiple lines if they are on the same slide, while still showing context.
+
+                // For each line in this character's script
                 for (int i = 0; i < lines.Value.Count; i++)
                 {
                     int lineIndex = allLines.FindIndex(l => l.Id == lines.Value[i].Id);
                     Line prevLine;
                     Line nextLine;
 
-                    string displayID = $"{lines.Value[i].Id.Split('.')[0]}.{lines.Value[i].Id.Split('.')[1]}";
-                    output.InsertParagraph($"{lines.Key}-{displayID}").Heading(HeadingType.Heading2);
-
-                    // Previous line
-                    if (addContextLines && lineIndex > 0 && allLines[lineIndex - 1].DisplayId == displayID)
+                    string displayID = lines.Value[i].DisplayId;
+                    
+                    // Only draw previous line if this is the first line on this slide.
+                    // TODO: Rewrite this so it won't skip out on previous context if there are MORE THAN ONE line between. This may require a massive rewrite...
+                    if (!isContinuation)
                     {
-                        prevLine = allLines[lineIndex - 1];
-                        output.InsertParagraph($"{prevLine.Character}: {prevLine.Text}").Color(Color.Gray).SpacingAfter(14).IndentationBefore = 1.0f;
+                        output.InsertParagraph($"{displayID}", false, format).Heading(HeadingType.Heading2);
+
+                        // Previous line
+                        if (addContextLines && lineIndex > 0 && allLines[lineIndex - 1].DisplayId == displayID)
+                        {
+                            prevLine = allLines[lineIndex - 1];
+                            output.InsertParagraph($"{prevLine.Character}: {prevLine.Text}", false, format).Color(Color.Gray).SpacingAfter(14).IndentationBefore = 1.0f;
+                        }
                     }
 
-                    output.InsertParagraph($"{lines.Value[i].Character}: ").Bold().Append($"{lines.Value[i].Text}").SpacingAfter(14).IndentationBefore = 1.0f;
+                    Paragraph p = output.InsertParagraph($"{lines.Value[i].Text}", false, format);
+                    p.SpacingAfter(14);
+                    p.SetLineSpacing(LineSpacingType.Line, 1.5f);
+                    p.IndentationBefore = 1.0f;
 
                     // Next line
                     if (addContextLines && lineIndex < allLines.Count - 1 && allLines[lineIndex + 1].DisplayId == displayID)
                     {
                         nextLine = allLines[lineIndex + 1];
-                        output.InsertParagraph($"{nextLine.Character}: {nextLine.Text}").Color(Color.Gray).SpacingAfter(14).IndentationBefore = 1.0f;
+                        output.InsertParagraph($"{nextLine.Character}: {nextLine.Text}", false, format).Color(Color.Gray).SpacingAfter(14).IndentationBefore = 1.0f;
                     }
+
+                    isContinuation = (i < lines.Value.Count - 1 && lines.Value[i + 1].DisplayId == displayID);
                 }
 
                 output.Save();

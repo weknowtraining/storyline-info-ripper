@@ -17,7 +17,7 @@ namespace StorylineRipper.Core.Narration
 
         private const string REGEX_MARKUP = "<(.+)\\|([\\S\\s]*?)>";
         //private const string REGEX_READABLE = "(^[^a-z\\v]+?:)\\s(\\X+?(?=(?:^[^a-z\\v]+?:))|\\X+?\\z)";
-        private const string REGEX_READABLE = "(^[^a-z\\v]+?):\\s((?:.|\\v)+?(?=(?:^[^a-z\\v]+?:))|(?:.|\\v)+?$)";
+        private const string REGEX_READABLE = "(^[^a-z\\n\\v]+?):\\s((?:.|\\v)+?(?=(?:^[^a-z\\v]+?:))|(?:.|\\v)+?$)";
 
         public NarrationParser(StoryContent content)
         {
@@ -36,7 +36,7 @@ namespace StorylineRipper.Core.Narration
                     if (slide.Notes == null || slide.Notes.Length == 0)
                         continue;
 
-                    Regex regex = new Regex(inputIsMarkup?REGEX_MARKUP:REGEX_READABLE, RegexOptions.Multiline);
+                    Regex regex = new Regex(inputIsMarkup?REGEX_MARKUP:REGEX_READABLE, RegexOptions.Multiline | RegexOptions.Singleline);
                     MatchCollection coll = regex.Matches(slide.Notes);
 
                     int i = 1;
