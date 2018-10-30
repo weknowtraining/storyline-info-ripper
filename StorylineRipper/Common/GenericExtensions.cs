@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
@@ -83,6 +84,18 @@ namespace StorylineRipper.Common.Extensions
         public static T GetRandom<T>(this T[] val)
         {
             return val[rand.Next(val.Length)];
+        }
+
+        public static void Add<T>(this List<T> list, params T[] items) => list.AddRange(items);
+
+        public static bool IsNullOrEmpty<T>(this List<T> list)
+        {
+            return (list == null || list.Count == 0);
+        }
+
+        public static bool IsNullOrEmpty<T>(this T[] array)
+        {
+            return (array == null || array.Length == 0);
         }
     }
 }

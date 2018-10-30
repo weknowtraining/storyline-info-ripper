@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml;
 
 using StorylineRipper.Core;
+using StorylineRipper.Core.Narration;
 using StorylineRipper.Common.Extensions;
 
 using Ionic.Zip;
@@ -88,6 +89,10 @@ namespace StorylineRipper.Core
 
             storyParser.ParseData();
             MainForm.UpdateMacroProgress(3, 5);
+
+            //Testing
+            NarrationParser narrationParser = new NarrationParser(storyParser.story);
+            narrationParser.ParseNotes();
         }
 
         public void WriteNarrationReport()

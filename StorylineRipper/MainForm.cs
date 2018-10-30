@@ -74,6 +74,7 @@ namespace StorylineRipper
         {
             AddToLog("Reading story file...");
             reader.ReadFile();
+
             reader.WriteNarrationReport();
         }
 

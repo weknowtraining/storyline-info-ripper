@@ -64,6 +64,7 @@
     <Compile Include="Core\Content\SlideContent.cs" />
     <Compile Include="Core\Content\StoryContent.cs" />
     <Compile Include="Core\DocXWriter.cs" />
+    <Compile Include="Core\Narration\NarrationParser.cs" />
     <Compile Include="Core\SlideParser.cs" />
     <Compile Include="Core\StoryReader.cs" />
     <Compile Include="MainForm.cs">
@@ -100,5 +101,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

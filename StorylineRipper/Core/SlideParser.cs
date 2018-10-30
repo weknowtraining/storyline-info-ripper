@@ -30,15 +30,9 @@ namespace StorylineRipper.Core
         {
             MainForm.AddToLog("Preparing to parse.");
             MainForm.UpdateMicroProgress(0, 0);
-            int slideCount = 0;
+
+            int slideCount = story.GetSlideCount();
             int currSlide = 0;
-            
-            // Peek ahead to see how many slides we will be parsing
-            for (int x = 0; x < story.Scenes.Length; x++)
-                for (int y = 0; y < story.Scenes[x].Slides.Length; y++)
-                {
-                    slideCount++;
-                }
 
             MainForm.AddToLog("Gaining Insight on workload.");
 

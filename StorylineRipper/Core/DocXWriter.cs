@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using StorylineRipper.Common.Extensions;
 using StorylineRipper.Core.Content;
 using Xceed.Words.NET;
 
@@ -20,18 +22,13 @@ namespace StorylineRipper.Core
             output = DocX.Create(filePath);
         }
 
-        public void GenerateNarrationReport(StoryContent story)
+        public void GenerateNotesReport(StoryContent story)
         {
-            //StringBuilder stringBuilder = new StringBuilder();
-            MainForm.AddToLog("Beginning translation to narration report.");
+            MainForm.AddToLog("Beginning translation to notes report.");
             MainForm.UpdateMicroProgress(0, 1);
 
-            int totalSlides = 0;
+            int totalSlides = story.GetSlideCount();
             int currSlide = 0;
-
-            for (int x = 0; x < story.Scenes.Length; x++)
-                for (int y = 0; y < story.Scenes[x].Slides.Length; y++)
-                    totalSlides++;
 
             // for every slide within every scene...
             for (int x = 0; x < story.Scenes.Length; x++)
@@ -41,7 +38,7 @@ namespace StorylineRipper.Core
 
                 for (int y = 0; y < story.Scenes[x].Slides.Length; y++)
                 {
-                    if (story.Scenes[x].Slides[y].Notes == null || story.Scenes[x].Slides[y].Notes.Trim() == "")
+                    if (story.Scenes[x].Slides[y].Notes.IsNullOrEmpty())
                         continue; // Just skip writing the notes if there aren't any.
 
                     MainForm.AddToLog($"Translating -{story.Scenes[x].Slides[y].Index}-");
@@ -56,6 +53,62 @@ namespace StorylineRipper.Core
             output.Dispose();
             MainForm.AddToLog("Translation Complete");
             MainForm.UpdateMicroProgress(totalSlides, totalSlides);
+        }
+
+        public void GenerateNarrationReport(StoryContent story, bool addLineBefore = false, bool addLineAfter = false)
+        {
+            int totalSlides = story.GetSlideCount();
+
+            Dictionary<string, List<Line>> scripts = new Dictionary<string, List<Line>>();
+            List<Line> allLines = new List<Line>();
+
+            foreach (string name in story.Characters)
+                scripts.Add(name, new List<Line>());
+
+            // for every slide within every scene...
+            for (int x = 0, currSlide = 0; x < story.Scenes.Length; x++)
+                for (int y = 0; y < story.Scenes[x].Slides.Length; y++, currSlide++)
+                {
+                    if (story.Scenes[x].Slides[y].Lines.IsNullOrEmpty())
+                        continue; // Just skip writing the notes if there aren't any.
+
+                    foreach (var line in story.Scenes[x].Slides[y].Lines)
+                    {
+                        scripts[line.Character].Add(line);
+                        allLines.Add(line);
+                    }
+                }
+
+            foreach (KeyValuePair<string, List<Line>> lines in scripts)
+            {
+                output.InsertParagraph($"{lines.Key}").Heading(HeadingType.Heading1);
+                for (int i = 0; i < lines.Value.Count; i++)
+                {
+                    int lineIndex = allLines.FindIndex(l => l.Id == lines.Value[i].Id);
+                    Line prevLine;
+                    Line nextLine;
+
+                    string displayID = $"{lines.Value[i].Id.Split('.')[0]}.{lines.Value[i].Id.Split('.')[1]}";
+                    output.InsertParagraph($"{lines.Key}-{displayID}").Heading(HeadingType.Heading2);
+
+                    if (addLineBefore && lineIndex > 0)
+                    {
+                        prevLine = allLines[lineIndex - 1];
+                        output.InsertParagraph($"{prevLine.Character}: {prevLine.Text}").Color(Color.Gray).SpacingAfter(14).IndentationBefore = 1.0f;
+                    }
+
+                    output.InsertParagraph($"{lines.Value[i].Character}: ").Bold().Append($"{lines.Value[i].Text}").SpacingAfter(14).IndentationBefore = 1.0f;
+
+                    if (addLineAfter && lineIndex < allLines.Count - 1)
+                    {
+                        nextLine = allLines[lineIndex + 1];
+                        output.InsertParagraph($"{nextLine.Character}: {nextLine.Text}").Color(Color.Gray).SpacingAfter(14).IndentationBefore = 1.0f;
+                    }
+                }
+            }
+
+            output.Save();
+            output.Dispose();
         }
     }
 }
