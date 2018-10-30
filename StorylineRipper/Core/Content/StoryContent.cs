@@ -93,5 +93,7 @@ namespace StorylineRipper.Core.Content
         public string Id { get; set; }
         public string Character { get; set; }
         public string Text { get; set; }
+
+        public string DisplayId { get { return $"{Id.Split('.')[0]}.{Id.Split('.')[1]}"; } }
     }
 }

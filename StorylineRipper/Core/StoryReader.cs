@@ -92,20 +92,19 @@ namespace StorylineRipper.Core
 
             //Testing
             NarrationParser narrationParser = new NarrationParser(storyParser.story);
-            narrationParser.ParseNotes();
+            narrationParser.ParseNotes(false);
         }
 
         public void WriteNarrationReport()
         {
-            OutputPath = Path.GetDirectoryName(PathToFile) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(PathToFile) + "-NarrationReport.docx";
-            DocXWriter writer = new DocXWriter(OutputPath);
+            OutputPath = Path.GetDirectoryName(PathToFile) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(PathToFile);
+            DocXWriter writer = new DocXWriter();
+            writer.GenerateNarrationReport(storyParser.story, OutputPath, true);
 
-            writer.GenerateNarrationReport(storyParser.story);
+            OutputPath = Path.GetDirectoryName(PathToFile) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(PathToFile) + "-NoteReport.docx";
+            writer = new DocXWriter(OutputPath);
+            writer.GenerateNotesReport(storyParser.story);
 
-            //string report = storyParser.GetNarrationReport();
-            //MainForm.UpdateMacroProgress(4, 5);
-
-            //WriteFile(report, "-NarrationReport.txt");
             MainForm.UpdateMacroProgress(5, 5);
             OnGenerationComplete?.Invoke();
         }

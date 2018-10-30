@@ -16,6 +16,8 @@ namespace StorylineRipper.Core
     {
         private DocX output;
 
+        public DocXWriter() { }
+
         public DocXWriter(string filePath)
         {
             File.Create(filePath).Dispose();
@@ -55,7 +57,7 @@ namespace StorylineRipper.Core
             MainForm.UpdateMicroProgress(totalSlides, totalSlides);
         }
 
-        public void GenerateNarrationReport(StoryContent story, bool addLineBefore = false, bool addLineAfter = false)
+        public void GenerateNarrationReport(StoryContent story, string filePath, bool addContextLines = false)
         {
             int totalSlides = story.GetSlideCount();
 
@@ -65,7 +67,7 @@ namespace StorylineRipper.Core
             foreach (string name in story.Characters)
                 scripts.Add(name, new List<Line>());
 
-            // for every slide within every scene...
+            // Grabbing all the lines and adding them to my own lists for reference
             for (int x = 0, currSlide = 0; x < story.Scenes.Length; x++)
                 for (int y = 0; y < story.Scenes[x].Slides.Length; y++, currSlide++)
                 {
@@ -79,8 +81,13 @@ namespace StorylineRipper.Core
                     }
                 }
 
+            // For each character...
             foreach (KeyValuePair<string, List<Line>> lines in scripts)
             {
+                string reportPath = filePath + $"-NarrationReport[{lines.Key}].docx";
+                File.Create(reportPath).Dispose();
+                output = DocX.Create(reportPath);
+
                 output.InsertParagraph($"{lines.Key}").Heading(HeadingType.Heading1);
                 for (int i = 0; i < lines.Value.Count; i++)
                 {
@@ -91,7 +98,8 @@ namespace StorylineRipper.Core
                     string displayID = $"{lines.Value[i].Id.Split('.')[0]}.{lines.Value[i].Id.Split('.')[1]}";
                     output.InsertParagraph($"{lines.Key}-{displayID}").Heading(HeadingType.Heading2);
 
-                    if (addLineBefore && lineIndex > 0)
+                    // Previous line
+                    if (addContextLines && lineIndex > 0 && allLines[lineIndex - 1].DisplayId == displayID)
                     {
                         prevLine = allLines[lineIndex - 1];
                         output.InsertParagraph($"{prevLine.Character}: {prevLine.Text}").Color(Color.Gray).SpacingAfter(14).IndentationBefore = 1.0f;
@@ -99,16 +107,20 @@ namespace StorylineRipper.Core
 
                     output.InsertParagraph($"{lines.Value[i].Character}: ").Bold().Append($"{lines.Value[i].Text}").SpacingAfter(14).IndentationBefore = 1.0f;
 
-                    if (addLineAfter && lineIndex < allLines.Count - 1)
+                    // Next line
+                    if (addContextLines && lineIndex < allLines.Count - 1 && allLines[lineIndex + 1].DisplayId == displayID)
                     {
                         nextLine = allLines[lineIndex + 1];
                         output.InsertParagraph($"{nextLine.Character}: {nextLine.Text}").Color(Color.Gray).SpacingAfter(14).IndentationBefore = 1.0f;
                     }
                 }
-            }
 
-            output.Save();
-            output.Dispose();
+                output.Save();
+                output.Dispose();
+
+                MainForm.AddToLog("Translation Complete");
+                MainForm.UpdateMicroProgress(totalSlides, totalSlides);
+            }
         }
     }
 }
