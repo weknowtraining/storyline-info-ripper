@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ZipReadWrite.Properties
+namespace StorylineRipper.Properties
 {
 
 

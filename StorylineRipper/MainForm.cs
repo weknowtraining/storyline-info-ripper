@@ -38,8 +38,10 @@ namespace StorylineRipper
         {
             reader = new StoryReader();
 
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "Storyline Story|*.story|All Files|*.*";
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Filter = "Storyline Story|*.story|All Files|*.*"
+            };
 
             isPathValid = (dialog.ShowDialog() == DialogResult.OK);
 
@@ -59,9 +61,10 @@ namespace StorylineRipper
             if (reader.LoadFile())
             {
                 reader.OnGenerationComplete += GenerationComplete;
-                generatorThread = new Thread(
-                    new ThreadStart(HandleNarrationGeneration));
-                generatorThread.IsBackground = true;
+                generatorThread = new Thread(new ThreadStart(HandleNarrationGeneration))
+                {
+                    IsBackground = true
+                };
                 generatorThread.Start();
                 AddToLog("Beginning workload...");
             }
@@ -79,9 +82,10 @@ namespace StorylineRipper
             if (reader.LoadFile())
             {
                 reader.OnGenerationComplete += GenerationComplete;
-                generatorThread = new Thread(
-                    new ThreadStart(HandleNotesGeneration));
-                generatorThread.IsBackground = true;
+                generatorThread = new Thread(new ThreadStart(HandleNotesGeneration))
+                {
+                    IsBackground = true
+                };
                 generatorThread.Start();
                 AddToLog("Beginning workload...");
             }
@@ -102,6 +106,7 @@ namespace StorylineRipper
             }
             catch(Exception e)
             {
+                AddErrorToLog(e.ToString());
                 AddErrorToLog(e.Message);
                 AddErrorToLog("An unexpected error has occured. Send the above red text to Kolton");
             }
@@ -118,6 +123,7 @@ namespace StorylineRipper
             }
             catch (Exception e)
             {
+                AddErrorToLog(e.ToString());
                 AddErrorToLog(e.Message);
                 AddErrorToLog("An unexpected error has occured. Send the above red text to Kolton");
             }

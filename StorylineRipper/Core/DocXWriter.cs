@@ -89,10 +89,12 @@ namespace StorylineRipper.Core
                 File.Create(reportPath).Dispose();
                 output = DocX.Create(reportPath);
 
-                Formatting format = new Formatting();
-                format.FontFamily = new Xceed.Words.NET.Font("Times New Roman");
-                format.FontColor = Color.Black;
-                format.Size = 12;
+                Formatting format = new Formatting
+                {
+                    FontFamily = new Xceed.Words.NET.Font("Times New Roman"),
+                    FontColor = Color.Black,
+                    Size = 12
+                };
 
                 // Document Head
                 output.InsertParagraph($"{Path.GetFileNameWithoutExtension(filePath)} – Narration Report: {lines.Key} (Narrator TBD)").Heading(HeadingType.Heading1);
