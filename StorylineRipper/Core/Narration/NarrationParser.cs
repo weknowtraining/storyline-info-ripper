@@ -11,17 +11,17 @@ namespace StorylineRipper.Core.Narration
 {
     class NarrationParser
     {
+        public List<string> Characters { get; private set; }
+
         private StoryContent content;
 
-        private List<string> characters;
-
         private const string REGEX_MARKUP = "<(.+)\\|([\\S\\s]*?)>";
-        //private const string REGEX_READABLE = "(^[^a-z\\v]+?:)\\s(\\X+?(?=(?:^[^a-z\\v]+?:))|\\X+?\\z)";
         private const string REGEX_READABLE = "(^[^a-z\\n\\v]+?):\\s((?:.|\\v)+?(?=(?:^[^a-z\\v]+?:))|(?:.|\\v)+?$)";
+        private const string REGEX_SELECTBRACES = "\\s?{(?:.|\\v)+?}\\s?";
 
         public NarrationParser(StoryContent content)
         {
-            characters = new List<string>();
+            Characters = new List<string>();
 
             this.content = content;
         }
@@ -42,13 +42,38 @@ namespace StorylineRipper.Core.Narration
                     int i = 1;
                     foreach (Match match in coll)
                     {
-                        slide.Lines.Add(new Line($"{slide.Index}.{i++}", match.Groups[1].Value.TrimEnd(':').Trim(), match.Groups[2].Value.Trim()));
-                        if (!characters.Contains(match.Groups[1].Value.Trim()))
-                            characters.Add(match.Groups[1].Value.Trim());
+                        slide.Lines.Add(new Line(
+                            $"{slide.Index}.{i++}", // Ex. 03.21.1 - Used for line number within a slide
+                            match.Groups[1].Value.TrimEnd(':').Trim(), // The character name
+                            Regex.Replace(match.Groups[2].Value.Trim(), REGEX_SELECTBRACES, ReplaceEvaluater) // Remove everything between { } braces.
+                            ));
+
+                        if (!Characters.Contains(match.Groups[1].Value.Trim()))
+                            Characters.Add(match.Groups[1].Value.Trim());
                     }
                 }
 
-            content.Characters = characters.ToArray();
+            content.Characters = Characters.ToArray();
+        }
+
+        /// <summary>
+        /// Used for the replacement regex to determine if a blank space should be returned or not
+        /// </summary>
+        /// <param name="match"></param>
+        /// <returns></returns>
+        public string ReplaceEvaluater(Match match)
+        {
+            bool isBlankBefore = match.Value[0] == ' ';
+            bool isBlankAfter = match.Value[match.Value.Length - 1] == ' ';
+
+            if (isBlankBefore && isBlankAfter)
+                return " ";
+            else if (!isBlankBefore && !isBlankAfter)
+                return "";
+            else if (isBlankBefore && !isBlankAfter)
+                return " ";
+            else // !isBlankBefore && isBlankAfter
+                return "";
         }
     }
 }

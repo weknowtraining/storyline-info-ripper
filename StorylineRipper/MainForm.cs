@@ -135,7 +135,7 @@ namespace StorylineRipper
 
             FilePathLabel.Invoke((MethodInvoker)(() =>
             {
-                FilePathLabel.Text = "Done!";
+                FilePathLabel.Text = Path.GetFileName(reader.PathToFile);
             }));
 
             //reader = null;
@@ -196,6 +196,11 @@ namespace StorylineRipper
                 // Scroll to the caret
                 Instance.DebugLog.ScrollToCaret();
             }));
+        }
+
+        private void MarkupToolTip_Popup(object sender, PopupEventArgs e)
+        {
+
         }
     }
 }

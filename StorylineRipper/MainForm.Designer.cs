@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.OpenFileButton = new System.Windows.Forms.Button();
             this.progressBar_Macro = new System.Windows.Forms.ProgressBar();
             this.FilePathLabel = new System.Windows.Forms.Label();
@@ -38,6 +39,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.UseMarkupCheckbox = new System.Windows.Forms.CheckBox();
             this.ShowContextLinesCheckbox = new System.Windows.Forms.CheckBox();
+            this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -48,6 +50,7 @@
             this.OpenFileButton.Size = new System.Drawing.Size(75, 23);
             this.OpenFileButton.TabIndex = 0;
             this.OpenFileButton.Text = "Open File";
+            this.MainToolTip.SetToolTip(this.OpenFileButton, "Choose a .story file to rip from.");
             this.OpenFileButton.UseVisualStyleBackColor = true;
             this.OpenFileButton.Click += new System.EventHandler(this.OpenFileButton_Click);
             // 
@@ -55,7 +58,7 @@
             // 
             this.progressBar_Macro.Location = new System.Drawing.Point(12, 288);
             this.progressBar_Macro.Name = "progressBar_Macro";
-            this.progressBar_Macro.Size = new System.Drawing.Size(415, 23);
+            this.progressBar_Macro.Size = new System.Drawing.Size(345, 23);
             this.progressBar_Macro.TabIndex = 1;
             // 
             // FilePathLabel
@@ -70,11 +73,13 @@
             // GenNotesButton
             // 
             this.GenNotesButton.Enabled = false;
-            this.GenNotesButton.Location = new System.Drawing.Point(246, 49);
+            this.GenNotesButton.Location = new System.Drawing.Point(176, 51);
             this.GenNotesButton.Name = "GenNotesButton";
             this.GenNotesButton.Size = new System.Drawing.Size(181, 23);
             this.GenNotesButton.TabIndex = 3;
             this.GenNotesButton.Text = "Generate Notes Report";
+            this.MainToolTip.SetToolTip(this.GenNotesButton, "This will generate a note report; All of the notes, unprocessed, separated by sli" +
+        "de and module.");
             this.GenNotesButton.UseVisualStyleBackColor = true;
             this.GenNotesButton.Click += new System.EventHandler(this.GenNotesButton_Click);
             // 
@@ -82,7 +87,7 @@
             // 
             this.progressBar_Micro.Location = new System.Drawing.Point(12, 269);
             this.progressBar_Micro.Name = "progressBar_Micro";
-            this.progressBar_Micro.Size = new System.Drawing.Size(415, 13);
+            this.progressBar_Micro.Size = new System.Drawing.Size(345, 13);
             this.progressBar_Micro.TabIndex = 4;
             // 
             // DebugLog
@@ -91,18 +96,20 @@
             this.DebugLog.Name = "DebugLog";
             this.DebugLog.ReadOnly = true;
             this.DebugLog.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.DebugLog.Size = new System.Drawing.Size(415, 151);
+            this.DebugLog.Size = new System.Drawing.Size(345, 151);
             this.DebugLog.TabIndex = 5;
             this.DebugLog.Text = "";
             // 
             // GenNarrButton
             // 
             this.GenNarrButton.Enabled = false;
-            this.GenNarrButton.Location = new System.Drawing.Point(246, 78);
+            this.GenNarrButton.Location = new System.Drawing.Point(176, 80);
             this.GenNarrButton.Name = "GenNarrButton";
             this.GenNarrButton.Size = new System.Drawing.Size(181, 23);
             this.GenNarrButton.TabIndex = 6;
             this.GenNarrButton.Text = "Generate Narration Report";
+            this.MainToolTip.SetToolTip(this.GenNarrButton, "This will generate narration reports for the selected file.  Each character will " +
+        "have their own report.");
             this.GenNarrButton.UseVisualStyleBackColor = true;
             this.GenNarrButton.Click += new System.EventHandler(this.GenNarrButton_Click);
             // 
@@ -112,7 +119,7 @@
             this.groupBox1.Controls.Add(this.ShowContextLinesCheckbox);
             this.groupBox1.Location = new System.Drawing.Point(12, 41);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(228, 65);
+            this.groupBox1.Size = new System.Drawing.Size(158, 65);
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Settings";
@@ -126,6 +133,7 @@
             this.UseMarkupCheckbox.Size = new System.Drawing.Size(84, 17);
             this.UseMarkupCheckbox.TabIndex = 1;
             this.UseMarkupCheckbox.Text = "Use Markup";
+            this.MainToolTip.SetToolTip(this.UseMarkupCheckbox, "Check this to use alternate notes format. Format looks like: \"<MAIN|Text>\"");
             this.UseMarkupCheckbox.UseVisualStyleBackColor = true;
             // 
             // ShowContextLinesCheckbox
@@ -138,13 +146,20 @@
             this.ShowContextLinesCheckbox.Size = new System.Drawing.Size(120, 17);
             this.ShowContextLinesCheckbox.TabIndex = 0;
             this.ShowContextLinesCheckbox.Text = "Show Context Lines";
+            this.MainToolTip.SetToolTip(this.ShowContextLinesCheckbox, "If checked, narration report lines will include the previous and next lines in gr" +
+        "ey for the narrator to reference.");
             this.ShowContextLinesCheckbox.UseVisualStyleBackColor = true;
+            // 
+            // MainToolTip
+            // 
+            this.MainToolTip.ToolTipTitle = "Help";
+            this.MainToolTip.Popup += new System.Windows.Forms.PopupEventHandler(this.MarkupToolTip_Popup);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(439, 325);
+            this.ClientSize = new System.Drawing.Size(368, 325);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.GenNarrButton);
             this.Controls.Add(this.DebugLog);
@@ -176,6 +191,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckBox UseMarkupCheckbox;
         private System.Windows.Forms.CheckBox ShowContextLinesCheckbox;
+        private System.Windows.Forms.ToolTip MainToolTip;
     }
 }
 
