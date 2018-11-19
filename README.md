@@ -28,6 +28,7 @@ I really have a lot to say! Look at all these things:
 - Item 1
 - Item 2
 ```
+Lists should use line breaks rather than hard returns.
 
 All text inside curly braces will be completely ignored when generating narration reports. This is useful for adding production notes, or comments to yourself.
 ```
@@ -35,6 +36,12 @@ KEVIN: I really hate {make his face angry when he says hate} it when Storyline c
 ```
 
 All other text will show up as written, including square brackets and parenthesis. ```[ ] ( )```
+
+# Known Bugs
+
+1. When using hard returns in a list, sometimes the ripper will stop grabbing text at the hard return. Instead, use a simple line break.
+
+**If you find any other bugs, please do not hesitate to submit an issue at** https://github.com/yardstick/storyline-info-ripper/issues
 
 # Other Info
 
