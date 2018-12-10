@@ -177,9 +177,9 @@ namespace StorylineRipper
             {
                 Instance.DebugLog.AppendText(log + Environment.NewLine);
 
-                //move the caret to the end of the text
+                // Move the caret to the end of the text
                 Instance.DebugLog.SelectionStart = Instance.DebugLog.TextLength;
-                //scroll to the caret
+                // Scroll to the caret
                 Instance.DebugLog.ScrollToCaret();
             }));
         }

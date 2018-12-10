@@ -16,7 +16,7 @@ namespace StorylineRipper.Core.Narration
         private StoryContent content;
 
         private const string REGEX_MARKUP = "<(.+)\\|([\\S\\s]*?)>";
-        private const string REGEX_READABLE = "(^[^a-z\\n\\v]+?):\\s((?:.|\\v)+?(?=(?:^[^a-z\\v]+?:))|(?:.|\\v)+?$)";
+        private const string REGEX_READABLE = "(^[^a-z\\n\\v]+?):\\s((?:.|\\v)+?(?=(?:^[^a-z\\v]+?:))|(?:.|\\v)+?\\z)";
         private const string REGEX_SELECTBRACES = "\\s?{(?:.|\\v)+?}\\s?";
 
         public NarrationParser(StoryContent content)
