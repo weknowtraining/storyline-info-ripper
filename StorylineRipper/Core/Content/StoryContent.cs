@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
@@ -13,19 +14,23 @@ namespace StorylineRipper.Core.Content
 
         private int slideCount = -1; // Cache the slide count
 
-        private Scene[] _scenes;
+        private Scene[] scenes;
 
         /// <remarks/>
         [XmlArray("sceneLst", IsNullable = false)]
         [XmlArrayItem("scene", IsNullable = false)]
-        public Scene[] Scenes {
-            get { return _scenes; }
+        public Scene[] Scenes
+        {
+            get { return scenes.Concat(Quiz.QuestionBanks).ToArray(); }
             set
             {
-                _scenes = value;
+                scenes = value;
                 slideCount = -1; // Reset slide count
             }
         }
+
+        [XmlElement("quizMgr", IsNullable = false)]
+        public QuizManager Quiz;
 
         public int GetSlideCount()
         {
@@ -57,6 +62,28 @@ namespace StorylineRipper.Core.Content
         /// <remarks/>
         [XmlAttribute("desc")]
         public string Description { get; set; }
+    }
+
+    /// <remarks/>
+    [Serializable]
+    [XmlType("quizMgr", AnonymousType = true)]
+    public partial class QuizManager
+    {
+        private Scene[] banks;
+
+        [XmlArray("bankLst", IsNullable = false)]
+        [XmlArrayItem("scene", IsNullable = false)]
+        public Scene[] QuestionBanks
+        {
+            get
+            {
+                if (banks == null)
+                    return new Scene[0];
+                else
+                    return banks;
+            }
+            set { banks = value; }
+        }
     }
 
     [Serializable]
