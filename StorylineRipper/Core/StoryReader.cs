@@ -82,6 +82,19 @@ namespace StorylineRipper.Core
             return text;
         }
 
+        /// <summary>
+        /// Returns the name of the root element in the provided xml string
+        /// </summary>
+        /// <param name="content">Serialized Xml string</param>
+        /// <returns>Element name</returns>
+        public string GetXmlRootFromText(string content)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(content);
+
+            return doc.DocumentElement.Name;
+        }
+
         public void ReadFile(bool useMarkup)
         {
             storyParser = new SlideParser(this, GetXmlTextAtPath("story/story.xml"), GetXmlTextAtPath("story/_rels/story.xml.rels"));

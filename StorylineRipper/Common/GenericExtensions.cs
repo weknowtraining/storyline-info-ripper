@@ -64,6 +64,15 @@ namespace StorylineRipper.Common.Extensions
             }
         }
 
+        public static T Deserialize<T>(this string data, string root)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(T), new XmlRootAttribute(root));
+            using (TextReader reader = new StringReader(data))
+            {
+                return (T)serializer.Deserialize(reader);
+            }
+        }
+
         /// <summary>
         /// Converts object into the specified type.
         /// </summary>

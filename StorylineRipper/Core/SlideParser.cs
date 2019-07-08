@@ -45,11 +45,24 @@ namespace StorylineRipper.Core
                     slide.Index = string.Format("{0}.{1}", (x + 1).ToString("D2"), (y + 1).ToString("D2"));
                     slide.Path = rels.Relationships.Single(r => r.Id == slide.Id).Path; // Find this slide within the relationships doc and get the path to it
 
-                    // Get relative path to slide
-                    SlideContent content = reader.GetXmlTextAtPath(slide.Path.TrimStart('/')).Deserialize<SlideContent>();
-                    slide.Name = content.Name;
-
                     MainForm.AddToLog($"Slide path found: {slide.Path}");
+
+                    // Get relative path to slide
+                    string slideString = reader.GetXmlTextAtPath(slide.Path.TrimStart('/'));
+                    SlideContent content;
+
+                    string rootNode = reader.GetXmlRootFromText(slideString);
+
+                    try
+                    {
+                        content = slideString.Deserialize<SlideContent>(rootNode);
+                        slide.Name = content.Name;
+                    }
+                    catch (InvalidOperationException e)
+                    {
+                        MainForm.AddErrorToLog($"Unable to parse slide {slide.Path} with error:\n{e.Message}");
+                        continue;
+                    }
 
                     if (content.Notes.Trim() != "")
                     {
